@@ -67,7 +67,8 @@ The customer is a **psychiatric clinic**: a private practice, group practice, or
 - **Psychiatric nurses, nurse practitioners, and physician assistants**: review alerts, follow up with patients, manage episodes.
 - **Practice managers / administrators**: manage clinician accounts, configuration, billing, and usage reports.
 - **Medical secretaries / front-desk staff**: enroll patients, manage reminders, track overdue check-ins.
-- **Patients** (end users, not customers): complete brief check-ins. May include **parents or guardians** completing check-ins for minors (for example, in ADHD treatment) **[TO VALIDATE whether minors are in MVP scope]**.
+- **Patients** (end users, not customers): complete brief check-ins.
+- **Guardians and caregivers** (end users, not customers): report on behalf of, or in addition to, patients who cannot fully report alone. This includes parents of **minors** (for example, children and adolescents in ADHD treatment) and legal guardians, decision supporters, or family caregivers of **dependent adults** (for example, intellectual disability, dementia, or severe mental illness). See section 6.1.
 
 ### 3.4 Initial target market
 
@@ -75,6 +76,7 @@ The customer is a **psychiatric clinic**: a private practice, group practice, or
 - **Initial segment:** small to mid-sized private psychiatric clinics and group practices (approximately 2 to 20 clinicians), especially those treating patients who are starting, stopping, or changing psychiatric medications.
 - **Why private clinics first:** shorter sales cycles and a single decision-maker, compared with health funds (Clalit, Maccabi, Meuhedet, Leumit) and hospitals, which have long procurement processes **[TO VALIDATE]**.
 - **Later segments in Israel:** clinics working with health funds under the mental-health reform, hospital outpatient psychiatry, and the health funds themselves as enterprise customers.
+- **Community segment:** clinics serving the ultra-Orthodox (Haredi) community, which need low-tech channels, discretion, and Shabbat-aware scheduling (section 6.2). Decide in discovery whether to target them in the first pilots **[TO VALIDATE]**.
 - **International expansion:** after product-market fit in Israel. See section 11.
 
 ## 4. Core value proposition
@@ -122,6 +124,7 @@ The PRD must include a short competitive analysis. Categories to cover:
 Expected differentiation **[TO VALIDATE]**:
 
 - Built for the Israeli market first: Hebrew-first and RTL, with Arabic, Russian, and English; local privacy compliance; local crisis resources.
+- Works for communities that generic tools miss, such as Haredi patients: kosher-phone and filtered-internet access, discreet messaging, and Shabbat-aware scheduling.
 - Narrow focus on medication-change monitoring rather than a broad, complex platform.
 - Very low workload for clinicians and staff.
 - Pre-visit briefing designed to fit into a short psychiatric appointment.
@@ -134,9 +137,9 @@ Validate whether psychiatric clinics will use a simple medication-change monitor
 
 ### MVP user flow
 
-1. A clinician or staff member enrolls a patient in a monitoring episode after a medication initiation, discontinuation, or dose change, and records the patient's consent.
+1. A clinician or staff member enrolls a patient in a monitoring episode after a medication initiation, discontinuation, or dose change, chooses who reports (patient, guardian/caregiver, or both; see section 6.1), and records the required consent.
 2. The staff member enters or confirms the patient's next appointment date so the briefing is ready in time.
-3. The system sends the patient a secure link by SMS, and optionally by WhatsApp or email **[TO VALIDATE WhatsApp Business API feasibility and compliance]**.
+3. The system sends the patient a secure link by SMS, and optionally by WhatsApp or email **[TO VALIDATE WhatsApp Business API feasibility and compliance]**. For patients without a smartphone or internet (for example, kosher phones), staff collect the check-in by phone instead (see section 6.2).
 4. The patient verifies their identity (for example, with a one-time code or date of birth) and completes a short check-in on a defined schedule, such as twice weekly for four to six weeks.
 5. The system displays symptom trends, adherence, side effects, and patient comments in a clinician dashboard.
 6. Before the next appointment, the system generates a concise pre-visit briefing for the clinician.
@@ -157,9 +160,22 @@ Validate whether psychiatric clinics will use a simple medication-change monitor
 - Common side-effect checklist, configurable by medication class or treatment episode.
 - Optional free-text field: "Anything you want your psychiatrist to know before your next visit?" with a clear notice that messages are **not monitored in real time**.
 - Safety screen with clear escalation instructions and local crisis resources.
-- Reminder schedule with configurable frequency.
+- Reminder schedule with configurable frequency, with no reminders on Shabbat and Jewish holidays (configurable per clinic).
+- Neutral, discreet reminder wording and sender name, with no mention of psychiatry or medication.
+- Staff-assisted phone check-in for patients without a smartphone or internet access.
+- Check-in page works on filtered internet and with images blocked.
 - Patient can opt out of reminders at any time.
 - Accessible design (large text, simple language, screen-reader support).
+- Age-appropriate version of the check-in for adolescents who report for themselves (simpler wording, validated youth measures where available).
+
+#### Guardian / caregiver check-in
+
+See section 6.1 for the full rules. In short:
+
+- Separate, clearly labelled check-in: "You are reporting about [patient first name]".
+- Guardian verifies their own identity, not the patient's.
+- Observer-based questions (what the guardian sees), not questions about the patient's inner feelings, using validated parent or caregiver measures where available.
+- Same adherence, side-effect, free-text, and safety screens, worded for an observer.
 
 #### Clinician dashboard
 
@@ -168,6 +184,7 @@ Validate whether psychiatric clinics will use a simple medication-change monitor
 - Clear visual indicators for worsening, improving, stable, or incomplete data.
 - Side-effect summary.
 - Patient free-text comments.
+- Every data point labelled by **who reported it** (patient, or guardian/caregiver with relationship). Patient and guardian reports shown side by side, never merged into one score.
 - Pre-visit briefing view, linked to the next appointment date.
 - **Export of the briefing** (copy-to-clipboard and PDF) so it can be pasted into the clinic's existing EMR without an integration.
 - Ability to mark a monitoring episode as reviewed, extended, or closed.
@@ -181,7 +198,8 @@ Validate whether psychiatric clinics will use a simple medication-change monitor
 - Clinician and staff accounts with role-based access control (for example: clinic admin, clinician, nurse, secretary).
 - Patient assignment to a clinician, and reassignment when a patient moves to another clinician.
 - Patient enrollment, basic demographics, and treatment-episode details.
-- Consent capture and record.
+- Consent capture and record, including guardian authority and minor assent where relevant.
+- Add, change, or remove a guardian/caregiver linked to a patient (for example, when a minor turns 18 or guardianship changes).
 - Reminder preferences.
 - Safety-alert routing configuration: who receives alerts, by which channel, and during which hours.
 - Basic audit log.
@@ -204,6 +222,90 @@ Use AI narrowly and conservatively:
 - Show the source data behind every statement in the summary, so clinicians can verify it.
 - The product must remain fully usable if the AI service is unavailable (charts and raw data still visible).
 - AI vendors must meet the same privacy and data-residency requirements as the rest of the product, and must not use clinic data for model training.
+
+### 6.1 Minors and dependent adults: guardian and caregiver reporting
+
+Some patients cannot report reliably or legally on their own. Without a guardian path, the product collects no data for these patients, and clinics treating children, adolescents, or dependent adults will not buy it.
+
+**Who this covers**
+
+- **Children** (for example, under about 12 to 14): a parent or legal guardian reports.
+- **Adolescents** (for example, about 14 to 17): the adolescent reports for themselves, a parent reports, or both. Clinicians often value both views (for example, in ADHD or depression).
+- **Dependent adults**: a legal guardian, an appointed decision supporter, or a family caregiver approved by the patient or clinician reports, alone or alongside the patient.
+
+Exact age thresholds and who may legally give consent and see data must come from Israeli legal advice (for example, the Patient Rights Law and the Legal Capacity and Guardianship Law) **[TO VALIDATE]**, and must be configurable per country.
+
+**Reporting modes (set by the clinician at enrollment)**
+
+1. Patient only.
+2. Guardian/caregiver only.
+3. Patient and guardian/caregiver, each with their own check-in.
+
+**Requirements**
+
+- Each guardian/caregiver has their own contact details, secure link, and identity verification; links are never shared between reporters.
+- Record the relationship (parent, legal guardian, decision supporter, family caregiver, other) and the basis of authority. Optionally store proof of guardianship.
+- Allow more than one guardian per patient (for example, two parents, including separated parents) **[TO VALIDATE how clinics handle custody disputes]**.
+- Guardian questions are observer-based; use validated parent or caregiver versions of measures where they exist and are licensed.
+- The safety screen is shown to guardians too, with instructions on what to do if they believe the patient is in danger, and it triggers the same clinic alert workflow.
+- When a minor turns 18, or guardianship ends, the system prompts staff to review consent and remove or keep the guardian's access.
+
+**Confidentiality**
+
+- Guardians **cannot** see the patient's own answers or free-text by default. Many adolescents will not report honestly if parents can read their answers.
+- Only the clinic team sees all reports. Any sharing with guardians is the clinician's decision, outside the product.
+- The adolescent is told clearly, in age-appropriate language, who can see their answers and when the clinic may need to involve parents for safety reasons.
+
+**MVP decision [TO VALIDATE in discovery]**
+
+- If the first target condition includes ADHD or child and adolescent psychiatry, guardian reporting is **required in MVP**.
+- If the first version is adult-only, build the data model to support guardians from day one, and release guardian reporting in the next phase.
+
+### 6.2 Community-specific needs: ultra-Orthodox (Haredi) patients
+
+The Haredi community is a large and fast-growing part of Israel's population, with high birth rates (many minors) and its own clinics, health-fund services, and referral networks. A product that ignores its needs will not work for many Israeli clinics. Supporting it well is also a strong local differentiator that foreign competitors are unlikely to match.
+
+The needs below apply to **many, not all**, Haredi patients and vary between groups. Each clinic must be able to configure them per patient. Validate every point with Haredi patients, clinicians, and community mental-health organisations during discovery **[TO VALIDATE]**.
+
+**Access without a smartphone or internet**
+
+- Many Haredi patients use "kosher" phones with no internet or browser, and some kosher phone plans block or restrict SMS **[TO VALIDATE current carrier restrictions]**. A web link alone will not reach them.
+- Others use filtered internet (for example, NetFree or Rimon). The check-in site must be approved by the main filtering services, load with images blocked, and contain no ads, external widgets, or unfiltered links.
+- Provide alternative check-in channels:
+  - **Staff-assisted phone check-in (MVP):** clinic staff call the patient or guardian and enter answers on their behalf, recorded as "staff-entered by phone".
+  - **Automated voice (IVR) check-in (next phase):** the patient calls a number or receives an automated call and answers by keypad. Phone voice lines are familiar and widely used in the community.
+  - **In-clinic tablet or paper check-in** before the appointment, entered by staff.
+- The dashboard must show which channel was used for each check-in.
+
+**Discretion and stigma**
+
+- Mental illness can carry strong stigma, including concern about effects on a family's matchmaking (shidduchim) prospects. Patients may hide treatment even from family members.
+- Phones are often shared within the family. Reminder messages and caller ID must be neutral: no words such as "psychiatry", "mental health", or medication names, and a neutral sender name chosen by the clinic.
+- The patient chooses which phone number, and which family member if any, the clinic may contact.
+- Patients may wish to involve a rabbi in treatment decisions. The product does not share data with rabbis or other third parties; any sharing is the clinician's decision, with the patient's explicit consent, outside the product.
+
+**Shabbat and Jewish holidays**
+
+- No reminders, automated calls, or messages from Friday before sunset until after Shabbat ends, or on Jewish holidays (Yom Tov). Use a Hebrew calendar with the clinic's local Shabbat times.
+- Check-in schedules shift automatically around Shabbat and holidays so patients are not marked "overdue" because of them.
+- Safety alerts must still be handled. Clinics must define who covers alerts during Shabbat and holidays (see section 8.2). Patient-facing crisis instructions must stay visible at all times.
+- Optional display of Hebrew calendar dates alongside Gregorian dates.
+
+**Language and content**
+
+- Hebrew at launch, with English for English-speaking Haredi patients. Yiddish to be validated as a later option.
+- Simple, modest wording. No images of people in patient-facing screens; use neutral icons only.
+- Sensitive questions (for example, sexual side effects of medication) must be optional, phrased modestly, and approved by clinicians who work with the community. Where possible, the clinician should be able to ask these in person instead.
+- Use culturally adapted versions of questionnaires where they exist.
+
+**Families and guardians**
+
+- Large families mean many minors, so guardian reporting (section 6.1) is likely needed for Haredi-focused clinics.
+- Either parent may be the reporting guardian; the clinic must be able to choose which parent or parents report.
+
+**Other Israeli communities**
+
+The same approach of configurable channels, language, discretion, and calendar should later be extended to Arab patients (Arabic, Muslim and Christian holidays, and local stigma concerns), Russian-speaking patients, and other communities.
 
 ## 7. Explicit exclusions for MVP
 
@@ -237,7 +339,7 @@ The MVP must not include:
 The product is **not an emergency service and is not monitored 24/7**. The PRD must define:
 
 - Who at the clinic receives safety alerts, by which channel (dashboard, SMS, email), and within what time frame.
-- What happens outside working hours, on weekends, and on holidays.
+- What happens outside working hours, on weekends, on Shabbat, and on Jewish and other holidays, given that some clinic staff will not use devices then.
 - What the patient is told about response times, at enrollment and on every safety screen.
 - How alerts are acknowledged and documented in the audit log.
 - How responsibility is split between the clinic and the vendor in the customer contract.
@@ -250,7 +352,7 @@ The product is **not an emergency service and is not monitored 24/7**. The PRD m
 - Encrypt data in transit and at rest.
 - Role-based access control and two-factor authentication for staff.
 - Audit logs for all access to patient data.
-- Appropriate patient consent and authorization, recorded in the system.
+- Appropriate patient consent and authorization, recorded in the system. For minors and dependent adults, record who consented on the patient's behalf, their authority, and the patient's own assent where appropriate.
 - Clear data-retention, deletion, and export policies.
 - The clinic owns its patient data; the vendor processes it on the clinic's behalf. Define this in a data processing agreement (DPA) with each clinic.
 - Do not use patient data to train third-party AI models without explicit legal and contractual safeguards.
@@ -339,6 +441,7 @@ The product is **not an emergency service and is not monitored 24/7**. The PRD m
 ### Phase 1: Discovery, weeks 1 to 4
 
 - Interview 15 to 25 psychiatrists, psychiatric nurses, clinic owners or medical directors, practice managers, and medical secretaries in Israel.
+- Include at least 2 to 3 clinics serving the Haredi community, plus Haredi patients or family members where the clinic allows it.
 - Interview at least 5 people who would actually sign the contract (economic buyers).
 - Identify the single most painful medication-monitoring workflow.
 - Ask what they currently use (including WhatsApp and phone calls), what they would pay, who approves the purchase, and what would prevent adoption.
@@ -386,6 +489,10 @@ If these criteria are not met, stop, interview users and buyers, and pivot befor
 |---|---|---|
 | Workflow burden | Clinicians and staff will abandon tools that add steps. | Design for under 60 seconds per check-in and minimal clinician clicks. |
 | Low patient completion | The product has no value without patient data. | Short check-ins, sensible reminders, native-language content, simple mobile web access. |
+| Wrong person reporting or seeing data | Guardians, separated parents, or caregivers may lack legal authority or may breach a patient's confidentiality. | Recorded authority per guardian, separate links and identity checks, guardians cannot see patient answers, review at age 18 or guardianship change. |
+| Excluding communities without smartphones | Many Haredi patients use kosher phones or filtered internet, so a link-only product will get no data from them. | Staff-assisted phone check-in in MVP, automated voice check-in next, filter-approved site. |
+| Stigma and accidental disclosure | A revealing message on a shared family phone could harm the patient socially. | Neutral message wording and sender name, patient-chosen contact number, no third-party sharing. |
+| Culturally inappropriate content | Immodest images or blunt sensitive questions could cause patients or clinics to reject the product. | No images of people, optional and modestly worded sensitive items, review by community clinicians. |
 | Safety incidents | Mental-health data and crisis situations create serious risk. | Clinician-approved safety protocols, local crisis resources, defined alert ownership, human review. |
 | Unclear liability for alerts | Patients may expect someone is watching 24/7. | Clear patient messaging, clinic-configured alert routing, contract terms splitting responsibility. |
 | Privacy and compliance | Psychiatric data is highly sensitive and regulated differently in each country. | Privacy, access control, audit logs, consent, data residency from day one; local legal review per market. |
@@ -408,9 +515,16 @@ If these criteria are not met, stop, interview users and buyers, and pivot befor
 
 - Which psychiatric conditions and medication changes should the first version support (depression, anxiety, ADHD, bipolar disorder, or another)?
 - Which validated or pragmatic symptom measures should be used, and are validated translations available?
-- Are minors in scope, and if so, how do parents or guardians complete check-ins and give consent?
+- Are minors in scope for MVP? This depends on whether the first condition includes ADHD or child and adolescent psychiatry.
+- At what ages may a minor report alone, give their own consent, or keep answers confidential from parents, in Israel and in later markets?
+- How should the product handle separated parents, disputed custody, or a guardian whose authority is unclear?
+- What proof of guardianship or decision-supporter appointment do clinics need to keep?
 - What is the optimal check-in frequency for each condition and medication type?
 - How should the product handle patients who do not have smartphones or reliable internet access?
+- Should Haredi-focused clinics be among the first pilot clinics, and is automated voice (IVR) check-in needed in MVP for them?
+- Which kosher phone plans allow SMS, and is the check-in site approved by NetFree, Rimon, and other filtering services?
+- Which questionnaire items are culturally sensitive for Haredi patients, and are culturally adapted versions available?
+- Is Yiddish needed, and for which share of patients?
 - Is WhatsApp an acceptable and compliant channel for check-in links in Israel?
 - What exact safety-alert workflow will each clinic use, including after hours?
 - Which EMR or clinic-management systems do target clinics use, and is any integration required to buy?
@@ -432,12 +546,12 @@ Create a complete PRD that includes:
 6. Scope: in-scope, out-of-scope, and future roadmap.
 7. User stories and acceptance criteria (for clinicians, staff, clinic admins, and patients).
 8. Detailed functional requirements.
-9. Patient check-in experience specification, including localization and accessibility.
+9. Patient and guardian/caregiver check-in experience specification, including localization, accessibility, alternative channels (staff phone, IVR, in-clinic), and community-specific needs such as Haredi patients.
 10. Clinician dashboard specification.
 11. Clinic administration and usage/value report specification.
 12. AI feature specification and guardrails.
 13. Safety-alert workflow specification.
-14. Data model outline, including multi-tenant clinic structure.
+14. Data model outline, including multi-tenant clinic structure and patient–guardian relationships.
 15. Privacy, security, clinical safety, and compliance requirements (Israel first, then other markets).
 16. Non-functional requirements: performance, accessibility, reliability, mobile web usability, localization (RTL).
 17. Pricing, sales model, onboarding, and customer success.
